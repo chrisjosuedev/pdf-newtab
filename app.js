@@ -3,9 +3,6 @@ const ejs = require('ejs')
 const app = express()
 const port = 3000
 const open = require('open')
-const path = require('path')
-
-var count = 1
 
 // PDF
 const pdf = require('pdf-creator-node')

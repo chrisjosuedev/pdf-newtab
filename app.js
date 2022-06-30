@@ -3,18 +3,14 @@ const ejs = require('ejs')
 const app = express()
 const port = 3000
 const open = require('open')
+
+// -- Temporary Comment
+
 const { BrowserWindow } = require('electron')
-
-
 
 const { invoiceDir } = require('./directories')
 
 var count = 0
-
-/* Home Path 
-const homeDir = require('os').homedir()
-const newDir = homeDir + '\\.is2-solutions\\invoices'
-*/
 
 // PDF
 const pdf = require('pdf-creator-node')
@@ -52,8 +48,6 @@ app.get('/', (req, res) => {
 })
 
 app.post('/open', async (req, res) => {
-  console.log(count)
-
   /* Data to PDF */
   var users = [
     {
@@ -83,6 +77,7 @@ app.post('/open', async (req, res) => {
   /* Create Document */
   try {
     await pdf.create(document, options)
+    // -- Temporary Comment 
     renderWindowsPdf(count)
   } catch (err) {
     console.log(err)
@@ -99,14 +94,27 @@ app.post('/open', async (req, res) => {
     console.error(error);
   }); */
 
+  // Abrir en navegador por default
+  /* await open(invoiceDir + `\\output${count}.pdf`, 
+  {
+    app: {
+      name: 'C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe'
+    }
+  })
+  */
+
+  // Abrir en Gestor de Archivos PDF
+  //await open(invoiceDir + `\\output${count}.pdf`)
+
+
   count++
 
-  //await open('http://localhost:3000/openpdf')
   res.redirect('/')
 })
 
+// -------------------- RENDER PDF IN A ELECTRON WINDOWS ----------------- //
 async function renderWindowsPdf(currentCount) {
-  /* Open PDF */
+  
   let win = new BrowserWindow({
     webPreferences: {
       plugins: true
@@ -121,16 +129,6 @@ async function renderWindowsPdf(currentCount) {
   
 }
 
-/*
-app.get('/openpdf', (req, res, next) => {
-  
-  next()
-
-  //res.sendFile('./reports/output.pdf', { root: __dirname }) 
-})
-*/
-
 app.listen(port, () => {
-  //initDirectory()
   console.log('Server on port', port)
 })

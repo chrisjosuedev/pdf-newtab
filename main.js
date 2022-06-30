@@ -34,7 +34,7 @@ function createWindow() {
   mainWindow.on("closed", function () {
     mainWindow = null;
   });
-  //mainWindow.maximize()
+  mainWindow.maximize()
   Menu.setApplicationMenu(mainMenu)
   
 }

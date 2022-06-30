@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "app.js",
   "scripts": {
+    "start": "electron main.js",
     "dev": "nodemon app.js"
   },
   "keywords": [],
@@ -16,6 +17,7 @@
     "pdf-creator-node": "^2.3.4"
   },
   "devDependencies": {
+    "electron": "^19.0.6",
     "nodemon": "^2.0.18"
   }
 }

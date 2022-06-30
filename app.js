@@ -3,13 +3,25 @@ const ejs = require('ejs')
 const app = express()
 const port = 3000
 const open = require('open')
+const { BrowserWindow } = require('electron')
+
+
+
+const { invoiceDir } = require('./directories')
+
+var count = 0
+
+/* Home Path 
+const homeDir = require('os').homedir()
+const newDir = homeDir + '\\.is2-solutions\\invoices'
+*/
 
 // PDF
 const pdf = require('pdf-creator-node')
 const fs = require('fs')
 const html = fs.readFileSync('template.html', 'utf8')
 
-// PDF Settings
+// PDF General Settings
 const options = {
   format: "Letter",
   orientation: "portrait",
@@ -29,29 +41,6 @@ const options = {
   }
 }
 
-var users = [
-  {
-    name: "Shyam",
-    age: "26",
-  },
-  {
-    name: "Navjot",
-    age: "26",
-  },
-  {
-    name: "Vitthal",
-    age: "26",
-  },
-];
-
-var document = {
-  html: html,
-  data: {
-    users: users,
-  },
-  path: "./reports/output.pdf",
-  type: "",
-};
 
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({extended: false}))
@@ -63,22 +52,85 @@ app.get('/', (req, res) => {
 })
 
 app.post('/open', async (req, res) => {
-  console.log(req.body.name)
+  console.log(count)
+
+  /* Data to PDF */
+  var users = [
+    {
+      name: "Shyam",
+      age: "26",
+    },
+    {
+      name: "Navjot",
+      age: "26",
+    },
+    {
+      name: "Vitthal",
+      age: "26",
+    },
+  ];
   
+  /* Config Document */
+  var document = {
+    html: html,
+    data: {
+      users: users,
+    },
+    path: invoiceDir + `\\output${count}.pdf`,
+    type: "",
+  };
+  
+  /* Create Document */
   try {
     await pdf.create(document, options)
+    renderWindowsPdf(count)
   } catch (err) {
     console.log(err)
   }
+
   
-  await open('http://localhost:3000/openpdf')
+
+/*   pdf
+  .create(document, options)
+  .then((res) => {
+    console.log(res);
+  })
+  .catch((error) => {
+    console.error(error);
+  }); */
+
+  count++
+
+  //await open('http://localhost:3000/openpdf')
   res.redirect('/')
 })
 
-app.get('/openpdf', (req, res) => {
-  res.sendFile('./reports/output.pdf', { root: __dirname }) 
+async function renderWindowsPdf(currentCount) {
+  /* Open PDF */
+  let win = new BrowserWindow({
+    webPreferences: {
+      plugins: true
+    }
+  })
+  
+  try {
+    await win.loadURL(invoiceDir + `\\output${currentCount}.pdf`)
+  } catch (e) {
+    console.log(e)
+  }
+  
+}
+
+/*
+app.get('/openpdf', (req, res, next) => {
+  
+  next()
+
+  //res.sendFile('./reports/output.pdf', { root: __dirname }) 
 })
+*/
 
 app.listen(port, () => {
+  //initDirectory()
   console.log('Server on port', port)
 })
